@@ -10,6 +10,11 @@ export const getUserChannelAPI = () => {
   return request.get('/v1_0/user/channels')
 }
 
+// 获取全部频道列表数据
+export const getAllChannelAPI = () => {
+  return request.get('/v1_0/channels')
+}
+
 // 请求频道文章列表数据
 export const getArtListAPI = (id, time) => {
   return request({
@@ -20,6 +25,11 @@ export const getArtListAPI = (id, time) => {
       timestamp: time
     }
   })
+}
+
+// 更新用户频道数据
+export const updateUserChannelAPI = channels => {
+  return request.put('/v1_0/user/channels', { channels })
 }
 
 // 将文章设置为不感兴趣的API

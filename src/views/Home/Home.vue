@@ -11,11 +11,22 @@
     </van-nav-bar>
     <!-- 频道列表的标签页 -->
     <van-tabs v-model="active" sticky offset-top="46px" swipeable>
-      <van-tab v-for="item in userChannel" :key="item.id" :title="item.name"><ArtList :channelId="item.id"></ArtList>
+      <van-tab v-for="item in userChannel" :key="item.id" :title="item.name">
+        <ArtList :channelId="item.id"></ArtList>
       </van-tab>
     </van-tabs>
     <!-- 频道列表图标 -->
-    <van-icon name="bars" size="16" class="plus" />
+    <van-icon name="bars" size="16" class="plus" @click="show = true" />
+    <!-- 频道列表弹出层 -->
+    <van-popup
+      v-model="show"
+      closeable
+      close-icon-position="top-left"
+      position="bottom"
+      :style="{ height: '90%' }"
+    >
+    <ChannelEdit :channels="userChannel" :myactive="active" @channelChange="getChannelId" @updateChannel="getChannels"></ChannelEdit>
+    </van-popup>
   </div>
 </template>
 
@@ -24,18 +35,25 @@
 import { getUserChannelAPI } from '@/api/homeAPI'
 // 文章列表组件
 import ArtList from '@/components/ArtList/ArtList.vue'
+// 频道管理组件
+import ChannelEdit from '@/components/ChannelEdit/ChannelEdit.vue'
 export default {
   name: 'Home',
   components: {
-    ArtList
+    ArtList,
+    ChannelEdit
   },
   data() {
     return {
       active: 0,
-      userChannel: []
+      // 频道列表数据
+      userChannel: [],
+      // 控制频道列表弹出层
+      show: false
     }
   },
   methods: {
+    // 获取用户频道事件
     async initUserChannel() {
       try {
         const { data: res } = await getUserChannelAPI()
@@ -43,8 +61,18 @@ export default {
       } catch {
         this.$toast('获取频道列表失败')
       }
+    },
+    // 切换用户频道事件
+    getChannelId(id) {
+      this.active = id
+      this.show = false
+    },
+    // 频道管理完成编辑后更新用户频道
+    getChannels() {
+      this.initUserChannel()
     }
   },
+  // 页面加载时，获取用户频道数据
   created() {
     this.initUserChannel()
   }
@@ -70,6 +98,9 @@ export default {
   }
   .van-tabs__line {
     background-color: #007bff;
+  }
+  .van-popup--bottom {
+    padding-top: 40px;
   }
 }
 </style>
