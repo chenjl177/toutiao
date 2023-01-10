@@ -6,7 +6,7 @@
         <img src="../../assets/logo.png" alt="logo" class="logo">
       </template>
       <template #right>
-        <van-icon name="search" color="white" size="18" />
+        <van-icon name="search" color="white" size="18" @click="$router.push('/search')" />
       </template>
     </van-nav-bar>
     <!-- 频道列表的标签页 -->

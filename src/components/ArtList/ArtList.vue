@@ -9,7 +9,13 @@
         :immediate-check="false"
       >
         <!-- @remove-article自定义事件，接收ArtItem组件传来的文章ID -->
-        <ArtItem v-for="(item, index) in artlist" :key="index" :article="item" @remove-article="removeArticle"></ArtItem>
+        <ArtItem
+        v-for="(item, index) in artlist"
+        :key="index"
+        :article="item"
+        :closable="true"
+        @remove-article="removeArticle"
+        ></ArtItem>
       </van-list>
     </van-pull-refresh>
   </div>

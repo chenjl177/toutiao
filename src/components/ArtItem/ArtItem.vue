@@ -16,7 +16,7 @@
           <!-- 文章信息 -->
           <span>{{ article.aut_name}} &nbsp;&nbsp; {{ article.comm_count }} &nbsp;&nbsp; {{ article.pubdate | dateFormat  }}</span>
           <!-- 关闭按钮 -->
-          <van-icon name="cross" @click.stop="show = true" />
+          <van-icon name="cross" v-if="closable" @click.stop="show = true" />
         </div>
       </template>
     </van-cell>
@@ -48,6 +48,10 @@ export default {
     article: {
       type: Object,
       reuqired: true
+    },
+    closable: {
+      type: Boolean,
+      required: true
     }
   },
   data() {
