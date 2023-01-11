@@ -34,6 +34,7 @@ export default {
   components: {
     ArtItem
   },
+  props: ['kw'],
   data() {
     return {
       // 页码值
@@ -49,9 +50,7 @@ export default {
   methods: {
     async initSearchList() {
       try {
-        // 正则获取搜索关键词
-        const kw = window.location.href.match('[^/]+(?!.*/)')
-        const { data: res } = await getSearchResultAPI(kw[0], this.page)
+        const { data: res } = await getSearchResultAPI(this.kw, this.page)
         // 将结果赋值给searchList
         this.searchList = [...this.searchList, ...res.data.results]
         this.loading = false

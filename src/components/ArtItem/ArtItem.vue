@@ -1,5 +1,5 @@
 <template>
-  <div class="ArtItem-container">
+  <div class="ArtItem-container" @click="toArticle">
     <van-cell>
       <!-- 标题区域的插槽 -->
       <template #title>
@@ -77,6 +77,9 @@ export default {
     }
   },
   methods: {
+    toArticle() {
+      this.$router.push('/article/' + this.article.art_id)
+    },
     // 一级反馈面板内容
     async onCellClick(name) {
       if (name === '不感兴趣') {
