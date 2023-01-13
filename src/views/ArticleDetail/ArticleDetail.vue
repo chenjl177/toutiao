@@ -32,14 +32,23 @@
         <van-button icon="good-job-o" type="danger" size="small" plain v-else @click="setLike">点赞</van-button>
       </div>
     </div>
+    <!-- 文章评论组件 -->
+    <art-cmt :artId="id"></art-cmt>
   </div>
 </template>
 
 <script>
 // 获取文章详情的API,关注用户,取消关注,点赞,取消点赞
 import { getArticleDetailAPI, followUserAPI, unfollowUserAPI, addLikeAPI, delLikeAPI } from '@/api/articleAPI'
+// 文章评论组件
+import ArtCmt from '@/components/ArtCmt/ArtCmt.vue'
 export default {
   name: 'ArticleDetail',
+  components: {
+    // 文章评论组件
+    ArtCmt
+  },
+  // 路由传参 id
   props: ['id'],
   data() {
     return {
@@ -77,6 +86,7 @@ export default {
         this.$toast('取消关注失败')
       }
     },
+    // 对文章点赞
     async setLike() {
       try {
         await addLikeAPI(this.article.art_id.toString())
@@ -86,6 +96,7 @@ export default {
         this.$toast('点赞失败')
       }
     },
+    // 取消文章点赞
     async setDisLike() {
       try {
         await delLikeAPI(this.article.art_id.toString())
@@ -97,6 +108,7 @@ export default {
     }
   },
   created() {
+    // 获取文章详情
     this.initArticle()
   }
 }
