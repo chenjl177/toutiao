@@ -110,6 +110,12 @@ export default {
   created() {
     // 获取文章详情
     this.initArticle()
+  },
+  beforeRouteLeave(to, from, next) {
+    from.meta.top = window.scrollY
+    setTimeout(() => {
+      next()
+    }, 0)
   }
 }
 </script>

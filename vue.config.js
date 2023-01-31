@@ -3,6 +3,23 @@ module.exports = defineConfig({
   transpileDependencies: true
 })
 
+module.exports = {
+  devServer: {
+    proxy: {
+      '/socket.io': {
+        target: 'http://toutiao.itheima.net/',
+        ws: true,
+        changeOrigin: true
+      },
+      'sockjs-node': {
+        target: 'http://toutiao.itheima.net/',
+        ws: false,
+        changeOrigin: true
+      }
+    }
+  }
+}
+
 // const path = require('path')
 
 // const coverPath = path.join(__dirname, './src/cover.less')

@@ -45,7 +45,7 @@ export default {
       // 获取文章列表的时间戳
       timestamp: Date.now(),
       // 上拉加载
-      loading: false,
+      loading: true,
       // 表示是否加载完毕
       // true表示加载完毕
       finished: false,

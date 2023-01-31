@@ -10,7 +10,7 @@
       </template>
     </van-nav-bar>
     <!-- 频道列表的标签页 -->
-    <van-tabs v-model="active" sticky offset-top="46px" swipeable>
+    <van-tabs v-model="active" sticky offset-top="46px" swipeable :before-change="beforeTabsChange" @change="onTabsChange">
       <van-tab v-for="item in userChannel" :key="item.id" :title="item.name">
         <ArtList :channelId="item.id"></ArtList>
       </van-tab>
@@ -49,7 +49,8 @@ export default {
       // 频道列表数据
       userChannel: [],
       // 控制频道列表弹出层
-      show: false
+      show: false,
+      nameToTop: {}
     }
   },
   methods: {
@@ -70,11 +71,26 @@ export default {
     // 频道管理完成编辑后更新用户频道
     getChannels() {
       this.initUserChannel()
+    },
+    beforeTabsChange() {
+      const name = this.userChannel[this.active].name
+      this.nameToTop[name] = window.scrollY
+      return true
+    },
+    onTabsChange() {
+      this.$nextTick(() => {
+        const name = this.userChannel[this.active].name
+        window.scrollTo(0, this.nameToTop[name] || 0)
+      })
     }
   },
   // 页面加载时，获取用户频道数据
   created() {
     this.initUserChannel()
+  },
+  beforeRouteLeave(to, from, next) {
+    from.meta.top = window.scrollY
+    next()
   }
 }
 </script>

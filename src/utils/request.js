@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Toast } from 'vant'
 import store from '@/store'
+import router from '@/router/index.js'
 
 // 调用axios.create()方法，创建axios的实例对象
 const instance = axios.create({
@@ -12,7 +13,7 @@ instance.interceptors.request.use(
   config => {
     Toast.loading({
       message: '加载中...', // 显示加载文本
-      duration: 0 // 展示时长，值为0则提示不会消失
+      duration: 10 // 展示时长，值为0则提示不会消失
     })
     return config
   },
@@ -28,6 +29,11 @@ instance.interceptors.response.use(
     return response
   },
   error => {
+    if (error.response && error.response.status === 401) {
+      console.log('token过期了')
+      store.commit('cleanState')
+      router.replace('/login?pre=' + router.currentRoute.fullPath)
+    }
     return Promise.reject(error)
   }
 )
