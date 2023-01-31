@@ -74,10 +74,10 @@ export default {
       })
       try {
         const { data: res } = await loginAPI(this.form)
-        console.log(res)
         this.$toast.success('登录成功')
         this.updateTokenInfo(res.data)
-        this.$router.push('/user')
+        const navPath = this.$route.query.pre || '/'
+        this.$router.replace(navPath)
       } catch (err) {
         console.log('登录失败', err)
         this.$toast.fail('登录失败')

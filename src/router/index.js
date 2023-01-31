@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '@/store/index'
 // 导入登录模块路由
 import Login from '@/views/Login/Login.vue'
 // 主页
@@ -21,6 +22,7 @@ import Chat from '@/views/Chat/Chat.vue'
 
 Vue.use(VueRouter)
 
+// 路由
 const routes = [
   { path: '/login', component: Login, name: 'login' },
   {
@@ -41,6 +43,35 @@ const routes = [
 const router = new VueRouter({
   routes
 })
+
+// 设置权限页面数组
+const pagePathArr = ['/user', '/user/edit']
+
+// 为路由的实例对象挂载全局前置守卫
+router.beforeEach((to, from, next) => {
+  // 判断访问地址是否在数组中
+  if (pagePathArr.indexOf(to.path) !== -1) {
+    // 获取token值
+    const tokenStr = store.state.tokenInfo.token
+    // 有token值放行，没有则跳转到登录页面
+    if (tokenStr) {
+      next()
+    } else {
+      next('/login')
+      next(`/login?pre=${to.fullPath}`)
+    }
+  } else {
+    // 访问的是无需权限的页面则直接放行
+    next()
+  }
+})
+
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location, onResolve, onReject) {
+  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
+  // 通过 .catch 捕获错误
+  return originalPush.call(this, location).catch(err => err)
+}
 
 router.afterEach((to, from) => {
   if (to.meta.isRecord) {

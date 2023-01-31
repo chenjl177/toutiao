@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import io from 'socket.io-client'
-// 获取用户基本信息
+// 获取用户基本信息，获取用户简介信息
 import { getUserInfoAPI, getUserProfileAPI } from '@/api/userAPI'
 
 Vue.use(Vuex)
@@ -27,11 +26,15 @@ export default new Vuex.Store({
   // 为state赋初始值
   state: initState,
   getters: {
+    // 获取用户头像
     userAvatar(state) {
+      // 设置默认头像图片
       let imgSrc = 'https://img01.yzcdn.cn/vant/cat.jpeg'
+      // 判断用户信息中是否有头像图片
       if (state.userInfo.photo) {
         imgSrc = state.userInfo.photo
       }
+      // 返回头像地址
       return imgSrc
     }
   },
@@ -74,17 +77,21 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    // 获取用户基本信息
     async initUserInfo(ctx) {
       try {
         const { data: res } = await getUserInfoAPI()
+        // 将信息存储到vuex中
         ctx.commit('updateUserInfo', res.data)
       } catch {
         console.log('获取用户数据失败')
       }
     },
+    // 获取用户简介信息
     async initUserProfile(ctx) {
       try {
         const { data: res } = await getUserProfileAPI()
+        // 将信息存储到vuex中
         ctx.commit('updateUserProfile', res.data)
       } catch {
         console.log('获取用户简介信息失败')
