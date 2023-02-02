@@ -7,6 +7,7 @@
       @click-left="$router.back()"
       fixed
     />
+    <!-- 聊天区域 -->
     <div class="chat-list">
       <div v-for="(item, index) in list" :key="index">
         <div class="chat-item left" v-if="item.name === 'xs'">
@@ -18,6 +19,7 @@
           <van-image round fit="fill" :src="userAvatar"/>
         </div>
       </div>
+      <!-- 对话框 -->
       <div class="reply-container van-heirline--top">
         <van-field
         class="chat-int"
@@ -35,67 +37,85 @@
 </template>
 
 <script>
+// 获取用户头像图片
 import { mapGetters } from 'vuex'
+// 导入socker.io
 import io from 'socket.io-client'
+// 导入vuex中的方法
 import store from '@/store/index'
 let socket = null
 export default {
   name: 'Chat',
   computed: {
+    // 用户头像
     ...mapGetters(['userAvatar'])
   },
   data() {
     return {
+      // 发送内容
       message: '',
+      // 聊天内容
       list: [
         { name: 'xs', msg: '你好' }
       ]
     }
   },
   methods: {
+    // 发送消息事件
     send() {
+      // 判断是否有内容
       if (!this.message) return
+      // 向服务器发送消息
       socket.emit('send', this.message)
+      // 将消息添加到聊天内容中
       this.list.push({ name: 'me', msg: this.message })
+      // 清空发送框
       this.message = ''
     },
+    // 回车发送消息事件
     onSend(event) {
-      if (event.ctrlKey && event.keyCode === 13) {
-        this.textarea += '\n'
-        console.log('ok')
-      } else if (event.keyCode === 13) {
+      if (event.keyCode === 13) {
         this.send()
       }
     },
+    // 自动滚动到底部聊天区域
     scrollToBottom() {
       const chatItem = document.querySelectorAll('.chat-item')
       const lastItem = chatItem[chatItem.length - 1]
+      // 让lastItem进入可视区域
       lastItem.scrollIntoView({
         behavior: 'smooth',
         block: 'end'
       })
     }
   },
+  // 监听
   watch: {
     list() {
+      // 如果list数据改变了，就调用滚动事件
       this.$nextTick(() => {
         this.scrollToBottom()
       })
     }
   },
   created() {
+    // 获取用户token值
     const tokenStr = store.state.tokenInfo.token
+    // 与服务器建立连接
     socket = io('http://toutiao.itheima.net', {
       query: {
         token: tokenStr
       },
       transports: ['websocket']
     })
+    // 将服务器发送回来的数据添加到聊天内容中
     socket.on('message', msg => {
       this.list.push({ name: 'xs', msg })
     })
   },
+  // 关闭组件后的回调函数
   beforeDestroy() {
+    // 关闭连接
     socket.close()
     socket = null
   }

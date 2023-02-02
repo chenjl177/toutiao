@@ -29,6 +29,7 @@
       maxlength="50"
       autosize
       :placeholder="isTips"
+      @keydown="onpubCmt"
       show-word-limit/>
       <div class="post-btn">
         <van-button :disabled="isRelese" @click="pubCmt">发布</van-button>
@@ -118,6 +119,13 @@ export default {
         this.message = ''
       } catch {
         this.$toast('发布评论失败')
+      }
+    },
+    // 回车发送评论
+    onpubCmt(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault()
+        this.pubCmt()
       }
     },
     // 父组件控制弹出层

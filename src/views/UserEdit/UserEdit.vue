@@ -46,8 +46,11 @@
 </template>
 
 <script>
+// 引入时间插件
 import dayjs from 'dayjs'
+// 导入vuex的函数
 import { mapActions, mapState } from 'vuex'
+// 更新用户简介信息API， 更新用户头像图片API
 import { updateUserProfileAPI, updateUserAvatarAPI } from '@/api/userAPI'
 export default {
   name: 'UserEdit',
@@ -65,21 +68,30 @@ export default {
     }
   },
   computed: {
+    // 用户简介信息
     ...mapState(['userProfile'])
   },
   methods: {
+    // 获取用户简介信息API
     ...mapActions(['initUserProfile']),
+    // 更改用户名
     onNameChange() {
+      // 弹出更改框
       this.showNameDialog = true
       this.name = this.userProfile.name
+      // 自动获取焦点
       this.$nextTick(() => {
         this.$refs.nameRef.focus()
       })
     },
+    // 更改生日
     onBirthdayChange() {
+      // 获取当前生日，无则获取当前日期
       this.currentDate = this.userProfile.birthday ? new Date(this.userProfile.birthday) : new Date()
+      // 弹出时间选择框
       this.showBirthday = true
     },
+    // 更改用户API
     async updateName(done) {
       try {
         await updateUserProfileAPI({ name: this.name })
@@ -90,6 +102,7 @@ export default {
         this.$toast('名称更新失败')
       }
     },
+    // 更改生日API
     async updateBirthday(value) {
       try {
         const dateStr = dayjs(value).format('YYYY-MM-DD')
@@ -101,22 +114,34 @@ export default {
         this.$toast('生日修改失败')
       }
     },
+    // Digiog弹出框，关闭前的回调函数
     beforeClose(action, done) {
+      // 点击了取消按钮，则关闭弹出框
       if (action === 'cancel') return done()
+      // 判断名字是否合法
       if (this.name === '' || this.name.length > 7) {
         this.$notify({ type: 'warning', message: '名称的长度为1-7个字符' })
         this.$refs.nameRef.focus()
+        // 阻止弹出层关闭
         return done(false)
       }
+      // 名字合法，则调用更改名字API
       this.updateName(done)
     },
+    // 更改头像
     async onFileChange(e) {
       try {
+        // 获取用户选择的文件列表
         const files = e.currentTarget.files
+        // 判断是否有文件
         if (files.length === 0) return
+        // 创建FormData对象
         const fd = new FormData()
+        // 向fd中追加数据
         fd.append('photo', files[0])
+        // 更新用户头像
         await updateUserAvatarAPI(fd)
+        // 更新用户简介信息
         this.initUserProfile()
         this.$notify({ type: 'success', message: '头像修改成功！' })
       } catch {
@@ -125,7 +150,9 @@ export default {
     }
   },
   created() {
+    // 判断是否有用户简介信息
     if (this.userProfile) {
+      // 获取用户简介的API
       this.initUserProfile()
     }
   }

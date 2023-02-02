@@ -42,6 +42,7 @@
 import { getArticleDetailAPI, followUserAPI, unfollowUserAPI, addLikeAPI, delLikeAPI } from '@/api/articleAPI'
 // 文章评论组件
 import ArtCmt from '@/components/ArtCmt/ArtCmt.vue'
+import hljs from 'highlight.js'
 export default {
   name: 'ArticleDetail',
   components: {
@@ -111,11 +112,27 @@ export default {
     // 获取文章详情
     this.initArticle()
   },
+  // 监听
+  watch: {
+    id() {
+      // 只要id值发生了变化，就清空旧的文章信息
+      this.article = null
+      // 重新获取文章信息
+      this.initArticle()
+    }
+  },
   beforeRouteLeave(to, from, next) {
     from.meta.top = window.scrollY
     setTimeout(() => {
       next()
     }, 0)
+  },
+  updated() {
+    // 判断是否有文章信息
+    if (this.article) {
+      // 将代码部分高亮
+      hljs.highlightAll()
+    }
   }
 }
 </script>
